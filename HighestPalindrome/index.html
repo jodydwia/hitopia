@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Highest Palindrome</title>
+</head>
+<body>
+<div id="root" class="root">
+    <h2>Highest Palindrome</h2>
+    <div class="container">
+        <form action="#" id="form" class="form">
+            <div class="form-group">
+                <label for="numbers">Numbers:</label>
+                <input type="text" id="numbers" name="numbers" class="numbers" placeholder="type numbers...">
+            </div>
+            <div class="form-group">
+                <label for="replace">Replace:</label>
+                <input type="text" id="replace" name="replace" class="replace" placeholder="type replace number...">
+            </div>
+            <button type="submit" id="submit">Check</button>
+        </form>
+        <label class="inputted"></label>
+        <div id="result" class="result"></div>
+    </div>
+</div>
+</body>
+</html>
+
+<style>
+    .root {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 15px;
+        padding: 25px;
+        border: 1px solid black;
+        border-radius: 10px;
+    }
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 300px;
+    }
+
+    .form-group {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    label {
+        width: 20%;
+    }
+
+    input {
+        height: 18px;
+        width: 70%;
+    }
+
+    .inputted {
+        display: block;
+        width: 100%;
+    }
+
+    .result {
+        display: none;
+        width: 300px;
+        height: 40px;
+        background-color: dodgerblue;
+        text-align: center;
+        line-height: 40px;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+</style>
+
+<script>
+    function makePalindrome(s, k) {
+        function helper(left, right, replacements) {
+            // When left pointer exceeds or equals right pointer
+            if (left >= right) {
+                return [s, replacements];
+            }
+
+            // If characters at left and right pointers are not equal
+            if (s[left] !== s[right]) {
+                // Replace smaller character with the larger one
+                if (s[left] > s[right]) {
+                    s = s.substring(0, right) + s[left] + s.substring(right + 1);
+                } else {
+                    s = s.substring(0, left) + s[right] + s.substring(left + 1);
+                }
+                replacements++;
+                // If number of replacements exceeds k, return "-1"
+                if (replacements > k) {
+                    return ["-1", replacements];
+                }
+            }
+
+            // Recur for the next pair of characters
+            return helper(left + 1, right - 1, replacements);
+        }
+
+        // Call the helper function with initial pointers and replacements count
+        const result = helper(0, s.length - 1, 0);
+
+
+        s = result[0];
+        let replacements = result[1];
+
+        // Replace remaining characters with 9 to maximize palindrome length
+        for (let i = 0, j = s.length - 1; i <= j && replacements < k; i++, j--) {
+            if (i === j) {
+                s = s.substring(0, i) + "9" + s.substring(i + 1);
+                replacements++;
+            } else if (s[i] !== "9" && replacements < k - 1) {
+                s = s.substring(0, i) + "9" + s.substring(i + 1);
+                s = s.substring(0, j) + "9" + s.substring(j + 1);
+                replacements += 2;
+            }
+        }
+
+        // Return the modified string
+        return s;
+    }
+
+
+    const btnSubmit = document.getElementById("submit");
+    const label = document.createElement('label');
+
+    btnSubmit.addEventListener('click', function (e) {
+        e.preventDefault()
+        const s = document.querySelector(".numbers").value;
+        const k = document.querySelector(".replace").value;
+        label.innerHTML = makePalindrome(s, k);
+        const result = document.getElementById("result");
+        result.append(label);
+        result.style.display = s ? "block" : "none";
+        const inputted = document.querySelector(".inputted");
+        inputted.innerHTML = s ? s + ' with replacement ' + k + 'x' : '';
+        document.getElementById("form").reset();
+    })
+
+</script>

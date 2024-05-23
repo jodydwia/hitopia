@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Balanced Bracket</title>
+</head>
+<body>
+<div id="root" class="root">
+    <h2>Balanced Brackets</h2>
+    <div class="container">
+        <form action="#" id="form" class="form">
+            <label for="brackets">Brackets:
+                <input type="text" id="brackets" name="brackets" class="brackets" placeholder="type brackets here...">
+            </label>
+            <button type="submit" id="submit">Check</button>
+        </form>
+        <label class="inputted"></label>
+        <div id="result" class="result"></div>
+    </div>
+</div>
+</body>
+</html>
+
+<style>
+    .root {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 15px;
+        padding: 25px;
+        border: 1px solid black;
+        border-radius: 10px;
+    }
+
+    .form {
+        display: flex;
+        gap: 10px;
+    }
+
+    input {
+        height: 18px;
+    }
+
+    .inputted {
+        display: block;
+        width: 100%;
+    }
+
+    .result {
+        display: none;
+        width: 300px;
+        height: 40px;
+        background-color: dodgerblue;
+        text-align: center;
+        line-height: 40px;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+</style>
+
+<script>
+    const stack = [];
+    function isBalanced(brackets, index) {
+
+            index = index > 0 ? index : 0;
+
+            if (index === brackets.length) {
+                return stack.length === 0;
+            }
+
+            const brc = brackets[index];
+
+            if (brc === '{' || brc === '(' || brc === '[') {
+                stack.push(brc);
+            } else {
+                if (stack.length === 0 ||
+                    (brc === '}' && stack[stack.length - 1] !== '{') ||
+                    (brc === ')' && stack[stack.length - 1] !== '(') ||
+                    (brc === ']' && stack[stack.length - 1] !== '[')) {
+                    return false;
+                }
+                stack.pop();
+            }
+
+            return isBalanced(brackets, index + 1);
+    }
+
+    const btnSubmit = document.getElementById("submit");
+    const label = document.createElement('label');
+
+    btnSubmit.addEventListener('click', function (e) {
+        e.preventDefault()
+        const brackets = document.querySelector(".brackets").value.replaceAll(' ', '');
+        const inputted = document.querySelector(".inputted");
+        inputted.innerHTML = brackets;
+        const result = document.getElementById("result");
+        result.style.display = brackets ? "block" : "none";
+        result.append(label);
+        stack.length = 0;
+        label.innerHTML = isBalanced(brackets) ? "YES" : "NO";
+        document.getElementById("form").reset();
+    })
+
+</script>
